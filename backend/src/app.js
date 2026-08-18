@@ -12,7 +12,7 @@ app.use(express.json());  //express.json() cuz -> Express needs to parse that JS
 
 app.get("/api/health", (req, res) => {
     res.json({
-        success: true,
+        success: true, 
         message: "PocketPilot API is running"
     });
 });
