@@ -2,7 +2,10 @@ const bcrypt = require("bcrypt");
 const pool = require("../config/database");
 const jwt = require("jsonwebtoken");
 
-
+const {
+    generateAccessToken,
+    generateRefreshToken
+} = require("../services/tokenService");
 
 
 
@@ -106,27 +109,39 @@ const loginUser = async (req, res) => {
         }
 
         // 4. Create JWT
-        const token = jwt.sign(
-            {
-                userId: user.id
-            },
-            process.env.JWT_SECRET,
-            {
-                expiresIn: process.env.JWT_EXPIRES_IN
-            }
+        const accessToken = generateAccessToken(user.id);
+        const refreshToken = generateRefreshToken();
+
+        const refreshTokenExpiry = new Date();
+        refreshTokenExpiry.setDate(
+            refreshTokenExpiry.getDate() + 7
         );
+
+
+        await pool.query(
+            `INSERT INTO refresh_tokens
+            (user_id, token, expires_at)
+            VALUES ($1, $2, $3)`,
+            [
+                user.id,
+                refreshToken,
+                refreshTokenExpiry
+            ]
+        );
+
 
         // 5. Return token and user
         return res.status(200).json({
-            success: true,
-            message: "Login successful",
-            token,
-            user: {
-                id: user.id,
-                name: user.name,
-                email: user.email
-            }
-        });
+        success: true,
+        message: "Login successful",
+        accessToken,
+        refreshToken,
+        user: {
+            id: user.id,
+            name: user.name,
+            email: user.email
+        }
+    });
 
     } catch (error) {
         console.error("Login error:", error);
@@ -139,11 +154,105 @@ const loginUser = async (req, res) => {
 };
 
 
+// Refresh Tkoen Controller
+const refreshAccessToken = async (req, res) => {
+    try {
+        const { refreshToken } = req.body;
 
+        if (!refreshToken) {
+            return res.status(401).json({
+                success: false,
+                message: "Refresh token required"
+            });
+        }
+
+        const result = await pool.query(
+            `SELECT user_id, expires_at
+             FROM refresh_tokens
+             WHERE token = $1`,
+            [refreshToken]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid refresh token"
+            });
+        }
+
+        const storedToken = result.rows[0];
+
+        if (new Date(storedToken.expires_at) < new Date()) {
+            await pool.query(
+                `DELETE FROM refresh_tokens
+                 WHERE token = $1`,
+                [refreshToken]
+            );
+
+            return res.status(401).json({
+                success: false,
+                message: "Refresh token expired"
+            });
+        }
+
+        const accessToken = generateAccessToken(
+            storedToken.user_id
+        );
+
+        return res.status(200).json({
+            success: true,
+            accessToken
+        });
+
+    } catch (error) {
+        console.error("Refresh token error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+};
+
+
+// Logout Controller
+const logoutUser = async (req, res) => {
+    try {
+        const { refreshToken } = req.body;
+
+        if (!refreshToken) {
+            return res.status(400).json({
+                success: false,
+                message: "Refresh token required"
+            });
+        }
+
+        await pool.query(
+            `DELETE FROM refresh_tokens
+             WHERE token = $1`,
+            [refreshToken]
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "Logged out successfully"
+        });
+
+    } catch (error) {
+        console.error("Logout error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+};
 
 
 
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    refreshAccessToken,
+    logoutUser
 };
