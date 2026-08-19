@@ -2,6 +2,8 @@ const pool = require("../config/database");
 
 // Creating a transaction
 const createTransaction = async (req, res) => {
+    const client = await pool.connect();
+
     try {
         const userId = req.user.id;
 
@@ -14,7 +16,10 @@ const createTransaction = async (req, res) => {
             transactionDate
         } = req.body;
 
-        // 1. Validate required fields
+        // -----------------------------
+        // 1. Validate input
+        // -----------------------------
+
         if (
             !accountId ||
             !categoryId ||
@@ -29,7 +34,6 @@ const createTransaction = async (req, res) => {
             });
         }
 
-        // 2. Validate transaction type
         if (!["income", "expense"].includes(type)) {
             return res.status(400).json({
                 success: false,
@@ -37,7 +41,6 @@ const createTransaction = async (req, res) => {
             });
         }
 
-        // 3. Validate amount
         if (Number(amount) <= 0) {
             return res.status(400).json({
                 success: false,
@@ -45,24 +48,39 @@ const createTransaction = async (req, res) => {
             });
         }
 
-        // 4. Check account ownership
-        const accountResult = await pool.query(
-            `SELECT id
+        // -----------------------------
+        // 2. Start database transaction
+        // -----------------------------
+
+        await client.query("BEGIN");
+
+        // -----------------------------
+        // 3. Check account ownership
+        // -----------------------------
+
+        const accountResult = await client.query(
+            `SELECT id, balance
              FROM accounts
              WHERE id = $1
-               AND user_id = $2`,
+               AND user_id = $2
+             FOR UPDATE`,
             [accountId, userId]
         );
 
         if (accountResult.rows.length === 0) {
+            await client.query("ROLLBACK");
+
             return res.status(404).json({
                 success: false,
                 message: "Account not found"
             });
         }
 
-        // 5. Check category ownership
-        const categoryResult = await pool.query(
+        // -----------------------------
+        // 4. Check category ownership
+        // -----------------------------
+
+        const categoryResult = await client.query(
             `SELECT id
              FROM categories
              WHERE id = $1
@@ -71,34 +89,39 @@ const createTransaction = async (req, res) => {
         );
 
         if (categoryResult.rows.length === 0) {
+            await client.query("ROLLBACK");
+
             return res.status(404).json({
                 success: false,
                 message: "Category not found"
             });
         }
 
-        // 6. Create transaction
-        const result = await pool.query(
+        // -----------------------------
+        // 5. Insert transaction
+        // -----------------------------
+
+        const transactionResult = await client.query(
             `INSERT INTO transactions
-             (
-                 user_id,
-                 account_id,
-                 category_id,
-                 type,
-                 amount,
-                 description,
-                 transaction_date
-             )
-             VALUES ($1, $2, $3, $4, $5, $6, $7)
-             RETURNING
-                 id,
-                 account_id,
-                 category_id,
-                 type,
-                 amount,
-                 description,
-                 transaction_date,
-                 created_at`,
+            (
+                user_id,
+                account_id,
+                category_id,
+                type,
+                amount,
+                description,
+                transaction_date
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            RETURNING
+                id,
+                account_id,
+                category_id,
+                type,
+                amount,
+                description,
+                transaction_date,
+                created_at`,
             [
                 userId,
                 accountId,
@@ -110,70 +133,62 @@ const createTransaction = async (req, res) => {
             ]
         );
 
+        // -----------------------------
+        // 6. Update account balance
+        // -----------------------------
+
+        if (type === "income") {
+            await client.query(
+                `UPDATE accounts
+                 SET balance = balance + $1
+                 WHERE id = $2
+                   AND user_id = $3`,
+                [amount, accountId, userId]
+            );
+        } else {
+            await client.query(
+                `UPDATE accounts
+                 SET balance = balance - $1
+                 WHERE id = $2
+                   AND user_id = $3`,
+                [amount, accountId, userId]
+            );
+        }
+
+        // -----------------------------
+        // 7. Commit everything
+        // -----------------------------
+
+        await client.query("COMMIT");
+
         return res.status(201).json({
             success: true,
             message: "Transaction created successfully",
-            transaction: result.rows[0]
+            transaction: transactionResult.rows[0]
         });
 
     } catch (error) {
+
+        // -----------------------------
+        // 8. Rollback on error
+        // -----------------------------
+
+        await client.query("ROLLBACK");
+
         console.error("Create transaction error:", error);
 
         return res.status(500).json({
             success: false,
             message: "Internal server error"
         });
-    }
-};
 
+    } finally {
 
-// Get transactions
-const getTransactions = async (req, res) => {
-    try {
-        const userId = req.user.id;
+        // -----------------------------
+        // 9. Release connection
+        // -----------------------------
 
-        const result = await pool.query(
-            `SELECT
-                t.id,
-                t.type,
-                t.amount,
-                t.description,
-                t.transaction_date,
-                t.created_at,
-
-                a.id AS account_id,
-                a.name AS account_name,
-
-                c.id AS category_id,
-                c.name AS category_name
-
-             FROM transactions t
-
-             INNER JOIN accounts a
-                ON t.account_id = a.id
-
-             INNER JOIN categories c
-                ON t.category_id = c.id
-
-             WHERE t.user_id = $1
-
-             ORDER BY t.transaction_date DESC,
-                      t.created_at DESC`,
-            [userId]
-        );
-
-        return res.status(200).json({
-            success: true,
-            transactions: result.rows
-        });
-
-    } catch (error) {
-        console.error("Get transactions error:", error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error"
-        });
+        client.release();
     }
 };
 
@@ -237,6 +252,8 @@ const getTransactionById = async (req, res) => {
 
 //Update Transaction
 const updateTransaction = async (req, res) => {
+    const client = await pool.connect();
+
     try {
         const userId = req.user.id;
         const transactionId = req.params.id;
@@ -278,24 +295,50 @@ const updateTransaction = async (req, res) => {
             });
         }
 
-        // Verify account ownership
-        const accountResult = await pool.query(
+        await client.query("BEGIN");
+
+        // Get old transaction
+        const oldTransactionResult = await client.query(
+            `SELECT *
+             FROM transactions
+             WHERE id = $1
+               AND user_id = $2
+             FOR UPDATE`,
+            [transactionId, userId]
+        );
+
+        if (oldTransactionResult.rows.length === 0) {
+            await client.query("ROLLBACK");
+
+            return res.status(404).json({
+                success: false,
+                message: "Transaction not found"
+            });
+        }
+
+        const oldTransaction = oldTransactionResult.rows[0];
+
+        // Check new account
+        const accountResult = await client.query(
             `SELECT id
              FROM accounts
              WHERE id = $1
-               AND user_id = $2`,
+               AND user_id = $2
+             FOR UPDATE`,
             [accountId, userId]
         );
 
         if (accountResult.rows.length === 0) {
+            await client.query("ROLLBACK");
+
             return res.status(404).json({
                 success: false,
                 message: "Account not found"
             });
         }
 
-        // Verify category ownership
-        const categoryResult = await pool.query(
+        // Check category
+        const categoryResult = await client.query(
             `SELECT id
              FROM categories
              WHERE id = $1
@@ -304,25 +347,52 @@ const updateTransaction = async (req, res) => {
         );
 
         if (categoryResult.rows.length === 0) {
+            await client.query("ROLLBACK");
+
             return res.status(404).json({
                 success: false,
                 message: "Category not found"
             });
         }
 
-        const result = await pool.query(
-            `UPDATE transactions
+        // Reverse old transaction effect
+        if (oldTransaction.type === "income") {
+            await client.query(
+                `UPDATE accounts
+                 SET balance = balance - $1
+                 WHERE id = $2
+                   AND user_id = $3`,
+                [
+                    oldTransaction.amount,
+                    oldTransaction.account_id,
+                    userId
+                ]
+            );
+        } else {
+            await client.query(
+                `UPDATE accounts
+                 SET balance = balance + $1
+                 WHERE id = $2
+                   AND user_id = $3`,
+                [
+                    oldTransaction.amount,
+                    oldTransaction.account_id,
+                    userId
+                ]
+            );
+        }
 
+        // Update transaction
+        const updatedTransactionResult = await client.query(
+            `UPDATE transactions
              SET account_id = $1,
                  category_id = $2,
                  type = $3,
                  amount = $4,
                  description = $5,
                  transaction_date = $6
-
              WHERE id = $7
                AND user_id = $8
-
              RETURNING
                  id,
                  account_id,
@@ -344,50 +414,115 @@ const updateTransaction = async (req, res) => {
             ]
         );
 
-        if (result.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "Transaction not found"
-            });
+        // Apply new transaction effect
+        if (type === "income") {
+            await client.query(
+                `UPDATE accounts
+                 SET balance = balance + $1
+                 WHERE id = $2
+                   AND user_id = $3`,
+                [amount, accountId, userId]
+            );
+        } else {
+            await client.query(
+                `UPDATE accounts
+                 SET balance = balance - $1
+                 WHERE id = $2
+                   AND user_id = $3`,
+                [amount, accountId, userId]
+            );
         }
+
+        await client.query("COMMIT");
 
         return res.status(200).json({
             success: true,
             message: "Transaction updated successfully",
-            transaction: result.rows[0]
+            transaction: updatedTransactionResult.rows[0]
         });
 
     } catch (error) {
+        await client.query("ROLLBACK");
+
         console.error("Update transaction error:", error);
 
         return res.status(500).json({
             success: false,
             message: "Internal server error"
         });
+
+    } finally {
+        client.release();
     }
 };
 
 
 //Delete Transaction
 const deleteTransaction = async (req, res) => {
+    const client = await pool.connect();
+
     try {
         const userId = req.user.id;
         const transactionId = req.params.id;
 
-        const result = await pool.query(
-            `DELETE FROM transactions
+        await client.query("BEGIN");
+
+        const transactionResult = await client.query(
+            `SELECT *
+             FROM transactions
              WHERE id = $1
                AND user_id = $2
-             RETURNING id`,
+             FOR UPDATE`,
             [transactionId, userId]
         );
 
-        if (result.rows.length === 0) {
+        if (transactionResult.rows.length === 0) {
+            await client.query("ROLLBACK");
+
             return res.status(404).json({
                 success: false,
                 message: "Transaction not found"
             });
         }
+
+        const transaction = transactionResult.rows[0];
+
+        // Reverse the transaction's effect
+        if (transaction.type === "income") {
+            await client.query(
+                `UPDATE accounts
+                 SET balance = balance - $1
+                 WHERE id = $2
+                   AND user_id = $3`,
+                [
+                    transaction.amount,
+                    transaction.account_id,
+                    userId
+                ]
+            );
+        } else {
+            await client.query(
+                `UPDATE accounts
+                 SET balance = balance + $1
+                 WHERE id = $2
+                   AND user_id = $3`,
+                [
+                    transaction.amount,
+                    transaction.account_id,
+                    userId
+                ]
+            );
+        }
+
+        // Delete transaction
+        await client.query(
+            `DELETE FROM transactions
+             WHERE id = $1
+               AND user_id = $2`,
+            [transactionId, userId]
+        );
+
+        await client.query("COMMIT");
 
         return res.status(200).json({
             success: true,
@@ -395,16 +530,19 @@ const deleteTransaction = async (req, res) => {
         });
 
     } catch (error) {
+        await client.query("ROLLBACK");
+
         console.error("Delete transaction error:", error);
 
         return res.status(500).json({
             success: false,
             message: "Internal server error"
         });
+
+    } finally {
+        client.release();
     }
 };
-
-
 
 
 module.exports = {
