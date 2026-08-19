@@ -8,6 +8,8 @@ const authRoutes = require("./routes/authRoutes");
 
 const accountRoutes = require("./routes/accountRoutes");
 
+const categoryRoutes = require("./routes/categoryRoutes");
+
 app.use(cors());  //Allows frontend to communicate with backend
 app.use(helmet()); //Helmet adds security-related HTTP headers.
 app.use(express.json());  //express.json() cuz -> Express needs to parse that JSON request body
@@ -23,5 +25,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 
 app.use("/api/accounts", accountRoutes);
+
+app.use("/api/categories", categoryRoutes);
 
 module.exports = app;
