@@ -3,7 +3,6 @@ import api from "../api/axios";
 import "./Accounts.css";
 
 const Accounts = () => {
-
     // ==========================================
     // ACCOUNTS STATE
     // ==========================================
@@ -48,7 +47,8 @@ const Accounts = () => {
 
     const [formData, setFormData] = useState({
         name: "",
-        type: "bank"
+        type: "bank",
+        initialBalance: ""
     });
 
 
@@ -57,14 +57,11 @@ const Accounts = () => {
     // ==========================================
 
     useEffect(() => {
-
         fetchAccounts();
-
     }, []);
 
 
     const fetchAccounts = async () => {
-
         try {
 
             setLoading(true);
@@ -90,6 +87,7 @@ const Accounts = () => {
             );
 
             setError(
+                error.response?.data?.message ||
                 "Unable to load your accounts."
             );
 
@@ -98,7 +96,6 @@ const Accounts = () => {
             setLoading(false);
 
         }
-
     };
 
 
@@ -108,7 +105,10 @@ const Accounts = () => {
 
     const handleChange = (event) => {
 
-        const { name, value } = event.target;
+        const {
+            name,
+            value
+        } = event.target;
 
         setFormData((previous) => ({
             ...previous,
@@ -118,7 +118,6 @@ const Accounts = () => {
         if (formError) {
             setFormError("");
         }
-
     };
 
 
@@ -132,13 +131,13 @@ const Accounts = () => {
 
         setFormData({
             name: "",
-            type: "bank"
+            type: "bank",
+            initialBalance: ""
         });
 
         setFormError("");
 
         setShowModal(true);
-
     };
 
 
@@ -148,17 +147,28 @@ const Accounts = () => {
 
     const openEditModal = (account) => {
 
+        console.log(
+            "Editing account:",
+            account
+        );
+
         setEditingAccount(account);
 
         setFormData({
             name: account.name || "",
-            type: account.type || "bank"
+            type: account.type || "bank",
+
+            // Load existing balance into edit form
+            initialBalance:
+                account.balance !== null &&
+                account.balance !== undefined
+                    ? String(account.balance)
+                    : "0"
         });
 
         setFormError("");
 
         setShowModal(true);
-
     };
 
 
@@ -178,6 +188,11 @@ const Accounts = () => {
 
         setFormError("");
 
+        setFormData({
+            name: "",
+            type: "bank",
+            initialBalance: ""
+        });
     };
 
 
@@ -190,9 +205,9 @@ const Accounts = () => {
         event.preventDefault();
 
 
-        // --------------------------------------
+        // ======================================
         // VALIDATION
-        // --------------------------------------
+        // ======================================
 
         if (!formData.name.trim()) {
 
@@ -201,7 +216,29 @@ const Accounts = () => {
             );
 
             return;
+        }
 
+
+        // Convert balance into number
+
+        const balanceValue =
+            formData.initialBalance === ""
+                ? 0
+                : Number(formData.initialBalance);
+
+
+        // Check valid number
+
+        if (
+            Number.isNaN(balanceValue) ||
+            balanceValue < 0
+        ) {
+
+            setFormError(
+                "Please enter a valid balance."
+            );
+
+            return;
         }
 
 
@@ -222,7 +259,10 @@ const Accounts = () => {
                     `/accounts/${editingAccount.id}`,
                     {
                         name: formData.name.trim(),
-                        type: formData.type
+
+                        type: formData.type,
+
+                        balance: balanceValue
                     }
                 );
 
@@ -232,6 +272,7 @@ const Accounts = () => {
                 );
 
             }
+
 
             // ==================================
             // CREATE ACCOUNT
@@ -243,7 +284,10 @@ const Accounts = () => {
                     "/accounts",
                     {
                         name: formData.name.trim(),
-                        type: formData.type
+
+                        type: formData.type,
+
+                        initialBalance: balanceValue
                     }
                 );
 
@@ -251,34 +295,35 @@ const Accounts = () => {
                     "Account created:",
                     response.data
                 );
-
             }
 
 
-            // --------------------------------------
+            // ==================================
             // CLOSE MODAL
-            // --------------------------------------
+            // ==================================
 
             setShowModal(false);
 
             setEditingAccount(null);
 
 
-            // --------------------------------------
+            // ==================================
             // RESET FORM
-            // --------------------------------------
+            // ==================================
 
             setFormData({
                 name: "",
-                type: "bank"
+                type: "bank",
+                initialBalance: ""
             });
 
 
-            // --------------------------------------
+            // ==================================
             // REFRESH ACCOUNTS
-            // --------------------------------------
+            // ==================================
 
             await fetchAccounts();
+
 
         } catch (error) {
 
@@ -295,9 +340,7 @@ const Accounts = () => {
         } finally {
 
             setCreating(false);
-
         }
-
     };
 
 
@@ -308,7 +351,6 @@ const Accounts = () => {
     const openDeleteModal = (account) => {
 
         setDeletingAccount(account);
-
     };
 
 
@@ -323,7 +365,6 @@ const Accounts = () => {
         }
 
         setDeletingAccount(null);
-
     };
 
 
@@ -363,6 +404,7 @@ const Accounts = () => {
 
             await fetchAccounts();
 
+
         } catch (error) {
 
             console.error(
@@ -378,9 +420,7 @@ const Accounts = () => {
         } finally {
 
             setDeleting(false);
-
         }
-
     };
 
 
@@ -391,19 +431,14 @@ const Accounts = () => {
     if (loading) {
 
         return (
-
             <div className="accounts-page">
 
                 <div className="accounts-loading">
-
                     Loading accounts...
-
                 </div>
 
             </div>
-
         );
-
     }
 
 
@@ -473,6 +508,7 @@ const Accounts = () => {
 
             <div className="accounts-summary">
 
+
                 <div>
 
                     <span>
@@ -515,6 +551,7 @@ const Accounts = () => {
 
                 </div>
 
+
             </div>
 
 
@@ -544,9 +581,7 @@ const Accounts = () => {
                         className="add-account-empty-button"
                         onClick={openCreateModal}
                     >
-
                         Add Your First Account
-
                     </button>
 
                 </div>
@@ -563,9 +598,11 @@ const Accounts = () => {
                                 key={account.id}
                             >
 
+
                                 {/* Account top */}
 
                                 <div className="account-card-top">
+
 
                                     <div className="account-icon">
 
@@ -616,18 +653,22 @@ const Accounts = () => {
                                 <div className="account-information">
 
                                     <h2>
+
                                         {
                                             account.name ||
                                             "Unnamed Account"
                                         }
+
                                     </h2>
 
 
                                     <p>
+
                                         {
                                             account.type ||
                                             "Account"
                                         }
+
                                     </p>
 
                                 </div>
@@ -641,6 +682,7 @@ const Accounts = () => {
                                         Current Balance
                                     </span>
 
+
                                     <strong>
 
                                         ₹
@@ -653,6 +695,7 @@ const Accounts = () => {
                                     </strong>
 
                                 </div>
+
 
                             </div>
 
@@ -685,6 +728,7 @@ const Accounts = () => {
 
                     }}
                 >
+
 
                     <div
                         className="account-modal"
@@ -721,6 +765,7 @@ const Accounts = () => {
 
 
                             <button
+                                type="button"
                                 className="modal-close"
                                 onClick={closeModal}
                                 disabled={creating}
@@ -747,6 +792,7 @@ const Accounts = () => {
                                     Account Name
                                 </label>
 
+
                                 <input
                                     id="name"
                                     name="name"
@@ -754,6 +800,7 @@ const Accounts = () => {
                                     placeholder="e.g. HDFC Bank"
                                     value={formData.name}
                                     onChange={handleChange}
+                                    disabled={creating}
                                 />
 
                             </div>
@@ -767,11 +814,13 @@ const Accounts = () => {
                                     Account Type
                                 </label>
 
+
                                 <select
                                     id="type"
                                     name="type"
                                     value={formData.type}
                                     onChange={handleChange}
+                                    disabled={creating}
                                 >
 
                                     <option value="bank">
@@ -799,6 +848,66 @@ const Accounts = () => {
                             </div>
 
 
+                            {/* =================================
+                                BALANCE
+                            ================================== */}
+
+                            <div className="form-group">
+
+                                <label htmlFor="initialBalance">
+
+                                    {editingAccount
+                                        ? "Current Balance"
+                                        : "Initial Balance"}
+
+                                </label>
+
+
+                                <div className="balance-input-wrapper">
+
+                                    <span className="currency-symbol">
+                                        ₹
+                                    </span>
+
+
+                                    <input
+                                        id="initialBalance"
+                                        name="initialBalance"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="0"
+                                        value={
+                                            formData.initialBalance
+                                        }
+                                        onChange={handleChange}
+                                        disabled={creating}
+                                    />
+
+                                </div>
+
+
+                                {!editingAccount && (
+
+                                    <small className="form-help">
+                                        Enter the amount currently
+                                        available in this account.
+                                    </small>
+
+                                )}
+
+                                {editingAccount && (
+
+                                    <small className="form-help">
+                                        Update the current balance
+                                        of this account.
+                                    </small>
+
+                                )}
+
+                            </div>
+
+
                             {/* Error */}
 
                             {formError && (
@@ -816,15 +925,14 @@ const Accounts = () => {
 
                             <div className="modal-actions">
 
+
                                 <button
                                     type="button"
                                     className="cancel-button"
                                     onClick={closeModal}
                                     disabled={creating}
                                 >
-
                                     Cancel
-
                                 </button>
 
 
@@ -844,9 +952,12 @@ const Accounts = () => {
 
                             </div>
 
+
                         </form>
 
+
                     </div>
+
 
                 </div>
 
@@ -875,12 +986,14 @@ const Accounts = () => {
                     }}
                 >
 
+
                     <div
                         className="delete-modal"
                         onMouseDown={(event) =>
                             event.stopPropagation()
                         }
                     >
+
 
                         <div className="delete-icon">
                             !
@@ -902,12 +1015,15 @@ const Accounts = () => {
                             </strong>
                             ?
 
+                            <br />
+
                             This action cannot be undone.
 
                         </p>
 
 
                         <div className="modal-actions">
+
 
                             <button
                                 className="cancel-button"
@@ -930,18 +1046,21 @@ const Accounts = () => {
 
                             </button>
 
+
                         </div>
 
+
                     </div>
+
 
                 </div>
 
             )}
 
+
         </div>
 
     );
-
 };
 
 

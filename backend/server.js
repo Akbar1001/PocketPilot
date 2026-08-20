@@ -14,7 +14,7 @@ const startserver= async () => {
         app.listen(PORT,()=>{
             console.log(`PocketPilot API running on port ${PORT}`);
             
-        }) 
+        })  
     }catch(error){
         console.error("Database connection failed:", error.message);
         process.exit(1);
