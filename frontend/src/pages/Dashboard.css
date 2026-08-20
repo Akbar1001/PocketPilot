@@ -1,46 +1,103 @@
+/* =====================================================
+   DASHBOARD PAGE
+===================================================== */
+
 .dashboard-page {
+    width: 100%;
     max-width: 1500px;
     margin: 0 auto;
+    color: #101828;
 }
+
+
+/* =====================================================
+   DASHBOARD HEADER
+===================================================== */
 
 .dashboard-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
 
     margin-bottom: 28px;
 }
 
 .dashboard-header h1 {
-    font-size: 28px;
     margin: 0;
+
+    font-size: 30px;
+    line-height: 1.2;
+
+    font-weight: 700;
+
+    color: #101828;
 }
 
 .dashboard-header p {
-    margin-top: 6px;
+    margin: 8px 0 0;
+
+    font-size: 14px;
 
     color: #667085;
 }
 
 .date-control {
-    background: white;
+    padding: 10px 15px;
+
+    background: #ffffff;
 
     border: 1px solid #e4e7ec;
 
-    border-radius: 10px;
+    border-radius: 9px;
 
-    padding: 10px 14px;
+    font-size: 13px;
+
+    font-weight: 500;
 
     color: #475467;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
 }
 
-/* KPI cards */
+.date-control:hover {
+    border-color: #1769ff;
+
+    color: #1769ff;
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.dashboard-error {
+    margin-bottom: 20px;
+
+    padding: 13px 16px;
+
+    border: 1px solid #fecdca;
+
+    border-radius: 10px;
+
+    background: #fef3f2;
+
+    color: #b42318;
+
+    font-size: 14px;
+}
+
+
+/* =====================================================
+   SUMMARY CARDS
+===================================================== */
 
 .summary-grid {
     display: grid;
 
     grid-template-columns:
-        repeat(4, 1fr);
+        repeat(4, minmax(0, 1fr));
 
     gap: 18px;
 
@@ -48,7 +105,9 @@
 }
 
 .summary-card {
-    background: white;
+    position: relative;
+
+    background: #ffffff;
 
     border: 1px solid #eaecf0;
 
@@ -56,55 +115,112 @@
 
     padding: 20px;
 
+    min-height: 155px;
+
     box-shadow:
-        0 2px 8px rgba(
-            16,
-            24,
-            40,
-            0.04
-        );
+        0 2px 5px rgba(16, 24, 40, 0.03);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
 }
+
+.summary-card:hover {
+    transform: translateY(-2px);
+
+    border-color: #d0d5dd;
+
+    box-shadow:
+        0 8px 20px rgba(16, 24, 40, 0.07);
+}
+
+
+/* =====================================================
+   SUMMARY CARD HEADER
+===================================================== */
 
 .summary-card-header {
     display: flex;
+
     align-items: center;
 
-    gap: 12px;
+    gap: 11px;
 }
+
+.summary-card-header h3 {
+    margin: 0;
+
+    font-size: 14px;
+
+    line-height: 1.4;
+
+    font-weight: 500;
+
+    color: #667085;
+}
+
+
+/* =====================================================
+   SUMMARY ICON
+===================================================== */
 
 .summary-icon {
     width: 42px;
     height: 42px;
 
-    border-radius: 11px;
+    flex-shrink: 0;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
+
+    border-radius: 11px;
 
     background: #edf4ff;
 
     color: #1769ff;
 
-    font-size: 19px;
-}
-
-.summary-card h3 {
-    margin: 0;
-
-    color: #667085;
-
-    font-size: 14px;
-
-    font-weight: 500;
-}
-
-.summary-value {
-    margin-top: 14px;
-
-    font-size: 25px;
+    font-size: 18px;
 
     font-weight: 700;
+}
+
+.income-icon {
+    background: #ecfdf3;
+
+    color: #12b76a;
+}
+
+.expense-icon {
+    background: #fef3f2;
+
+    color: #f04438;
+}
+
+.savings-icon {
+    background: #f4f3ff;
+
+    color: #7f56d9;
+}
+
+
+/* =====================================================
+   SUMMARY VALUES
+===================================================== */
+
+.summary-value {
+    margin-top: 18px;
+
+    font-size: 26px;
+
+    line-height: 1.2;
+
+    font-weight: 700;
+
+    color: #101828;
 }
 
 .summary-description {
@@ -115,21 +231,32 @@
     color: #98a2b3;
 }
 
-/* Main cards */
+
+/* =====================================================
+   MAIN DASHBOARD GRID
+===================================================== */
 
 .dashboard-grid {
     display: grid;
 
     grid-template-columns:
-        1.4fr 1fr;
+        minmax(0, 1.35fr)
+        minmax(0, 1fr);
 
     gap: 20px;
 
     margin-bottom: 20px;
 }
 
+
+/* =====================================================
+   DASHBOARD CARDS
+===================================================== */
+
 .dashboard-card {
-    background: white;
+    min-width: 0;
+
+    background: #ffffff;
 
     border: 1px solid #eaecf0;
 
@@ -138,40 +265,119 @@
     padding: 22px;
 
     box-shadow:
-        0 2px 8px rgba(
-            16,
-            24,
-            40,
-            0.04
-        );
+        0 2px 5px rgba(16, 24, 40, 0.03);
 }
 
-.dashboard-card h2 {
-    margin: 0 0 20px;
 
-    font-size: 18px;
-}
+/* =====================================================
+   CARD HEADER
+===================================================== */
 
-/* Transactions */
-
-.transaction-row {
-    display: grid;
-
-    grid-template-columns:
-        1fr auto;
+.card-title-row {
+    display: flex;
 
     align-items: center;
 
-    padding: 15px 0;
+    justify-content: space-between;
 
-    border-bottom:
-        1px solid #f0f2f5;
+    gap: 15px;
+
+    margin-bottom: 10px;
+}
+
+.card-title-row h2 {
+    margin: 0;
+
+    font-size: 18px;
+
+    line-height: 1.4;
+
+    font-weight: 650;
+
+    color: #101828;
+}
+
+.view-all-button {
+    padding: 5px 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #1769ff;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: color 0.2s ease;
+}
+
+.view-all-button:hover {
+    color: #004ecc;
+}
+
+
+/* =====================================================
+   TRANSACTIONS
+===================================================== */
+
+.transactions-list {
+    width: 100%;
+}
+
+.transaction-row {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 16px 5px;
+
+    border-bottom: 1px solid #f2f4f7;
+
+    border-radius: 7px;
+
+    transition:
+        background 0.2s ease,
+        padding 0.2s ease;
+}
+
+.transaction-row:hover {
+    background: #f8fafc;
+
+    padding-left: 10px;
+
+    padding-right: 10px;
+}
+
+.transaction-row:last-child {
+    border-bottom: none;
+}
+
+.transaction-info {
+    min-width: 0;
 }
 
 .transaction-info strong {
     display: block;
 
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
     font-size: 14px;
+
+    font-weight: 600;
+
+    color: #344054;
 }
 
 .transaction-category {
@@ -184,68 +390,127 @@
     color: #98a2b3;
 }
 
-.transaction-income {
-    color: #12b76a;
+.transaction-income,
+.transaction-expense {
+    flex-shrink: 0;
+
+    font-size: 14px;
 
     font-weight: 600;
+}
+
+.transaction-income {
+    color: #12b76a;
 }
 
 .transaction-expense {
     color: #f04438;
-
-    font-weight: 600;
 }
 
-/* Category */
 
-.category-row {
-    margin-bottom: 18px;
-}
+/* =====================================================
+   PIE CHART
+===================================================== */
 
-.category-header {
+.pie-chart-container {
+    width: 100%;
+
+    min-height: 280px;
+
     display: flex;
 
-    justify-content: space-between;
+    align-items: center;
 
-    margin-bottom: 7px;
+    justify-content: center;
+}
+
+
+/* =====================================================
+   CATEGORY ANALYSIS
+===================================================== */
+
+.category-analysis-card {
+    margin-bottom: 20px;
+}
+
+.chart-subtitle {
+    margin: 5px 0 0;
+
+    font-size: 12px;
+
+    color: #98a2b3;
+}
+
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+.empty-state {
+    min-height: 160px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    color: #98a2b3;
 
     font-size: 14px;
 }
 
-.category-header strong {
-    color: #344054;
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.dashboard-loading {
+    min-height: 400px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #667085;
+
+    font-size: 15px;
 }
 
-.category-bar {
-    height: 8px;
 
-    border-radius: 20px;
+/* =====================================================
+   RECHARTS
+===================================================== */
 
-    background: #edf2f7;
-
-    overflow: hidden;
+.recharts-text {
+    font-size: 12px;
 }
 
-.category-fill {
-    height: 100%;
+.recharts-legend-item-text {
+    color: #667085 !important;
 
-    border-radius: 20px;
-
-    background: #1769ff;
+    font-size: 12px;
 }
 
-/* Responsive */
+.recharts-tooltip-wrapper {
+    outline: none;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
 
 @media (max-width: 1100px) {
 
     .summary-grid {
         grid-template-columns:
-            repeat(2, 1fr);
+            repeat(2, minmax(0, 1fr));
     }
-
-}
-
-@media (max-width: 800px) {
 
     .dashboard-grid {
         grid-template-columns: 1fr;
@@ -253,18 +518,114 @@
 
 }
 
-@media (max-width: 550px) {
 
-    .summary-grid {
-        grid-template-columns: 1fr;
+/* =====================================================
+   SMALL TABLET
+===================================================== */
+
+@media (max-width: 800px) {
+
+    .dashboard-page {
+        max-width: 100%;
     }
 
     .dashboard-header {
         align-items: flex-start;
 
+        gap: 15px;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .dashboard-header {
         flex-direction: column;
 
-        gap: 15px;
+        align-items: flex-start;
+
+        margin-bottom: 20px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 24px;
+    }
+
+    .dashboard-header p {
+        font-size: 13px;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+
+        gap: 12px;
+    }
+
+    .summary-card {
+        min-height: auto;
+
+        padding: 17px;
+    }
+
+    .summary-value {
+        font-size: 23px;
+    }
+
+    .dashboard-card {
+        padding: 17px;
+
+        border-radius: 12px;
+    }
+
+    .card-title-row h2 {
+        font-size: 16px;
+    }
+
+    .transaction-row {
+        padding: 14px 3px;
+    }
+
+    .transaction-info strong {
+        max-width: 160px;
+    }
+
+}
+
+
+/* =====================================================
+   VERY SMALL MOBILE
+===================================================== */
+
+@media (max-width: 400px) {
+
+    .dashboard-header h1 {
+        font-size: 22px;
+    }
+
+    .summary-card-header h3 {
+        font-size: 13px;
+    }
+
+    .summary-value {
+        font-size: 21px;
+    }
+
+    .transaction-row {
+        gap: 8px;
+    }
+
+    .transaction-info strong {
+        max-width: 120px;
+    }
+
+    .transaction-income,
+    .transaction-expense {
+        font-size: 13px;
     }
 
 }
