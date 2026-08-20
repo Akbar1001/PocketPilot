@@ -547,7 +547,6 @@ const deleteTransaction = async (req, res) => {
 
 module.exports = {
     createTransaction,
-    getTransactions,
     getTransactionById,
     updateTransaction,
     deleteTransaction

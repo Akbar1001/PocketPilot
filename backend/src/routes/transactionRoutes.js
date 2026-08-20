@@ -4,7 +4,6 @@ const authenticate = require("../middleware/authMiddleware");
 
 const {
     createTransaction,
-    getTransactions,
     getTransactionById,
     updateTransaction,
     deleteTransaction
@@ -14,7 +13,6 @@ const router = express.Router();
 
 router.post("/", authenticate, createTransaction);
 
-router.get("/", authenticate, getTransactions);
 
 router.get("/:id", authenticate, getTransactionById);
 
