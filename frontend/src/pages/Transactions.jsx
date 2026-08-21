@@ -28,6 +28,21 @@ function Transactions() {
 
 
     // ==========================================
+    // SEARCH & FILTER STATES
+    // ==========================================
+
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const [typeFilter, setTypeFilter] =
+        useState("all");
+
+    const [accountFilter, setAccountFilter] =
+        useState("all");
+
+    const [categoryFilter, setCategoryFilter] =
+        useState("all");
+
+    // ==========================================
     // FORM STATE
     // ==========================================
 
@@ -40,6 +55,27 @@ function Transactions() {
         transactionDate:
             new Date().toISOString().split("T")[0]
     });
+
+
+    // ==========================================
+    // TRANSACTION SUMMARY
+    // ==========================================
+
+    const totalIncome = transactions
+        .filter((transaction) => transaction.type === "income")
+        .reduce(
+            (total, transaction) => total + Number(transaction.amount || 0),
+            0
+        );
+
+    const totalExpense = transactions
+        .filter((transaction) => transaction.type === "expense")
+        .reduce(
+            (total, transaction) => total + Number(transaction.amount || 0),
+            0
+        );
+
+    const netBalance = totalIncome - totalExpense;
 
 
     // ==========================================
@@ -674,6 +710,67 @@ function Transactions() {
 
 
     // ==========================================
+    // FILTERED TRANSACTIONS
+    // ==========================================
+
+    const filteredTransactions = transactions.filter(
+        (transaction) => {
+
+            const search =
+                searchTerm.trim().toLowerCase();
+
+            const description =
+                String(
+                    transaction.description || ""
+                ).toLowerCase();
+
+            const categoryName =
+                getCategoryName(transaction)
+                    .toLowerCase();
+
+            const accountName =
+                getAccountName(transaction)
+                    .toLowerCase();
+
+            const matchesSearch =
+                !search ||
+                description.includes(search) ||
+                categoryName.includes(search) ||
+                accountName.includes(search);
+
+            const matchesType =
+                typeFilter === "all" ||
+                transaction.type === typeFilter;
+
+            const transactionAccountId =
+                transaction.account_id ||
+                transaction.accountId;
+
+            const transactionCategoryId =
+                transaction.category_id ||
+                transaction.categoryId;
+
+            const matchesAccount =
+                accountFilter === "all" ||
+                String(transactionAccountId) ===
+                    String(accountFilter);
+
+            const matchesCategory =
+                categoryFilter === "all" ||
+                String(transactionCategoryId) ===
+                    String(categoryFilter);
+
+            return (
+                matchesSearch &&
+                matchesType &&
+                matchesAccount &&
+                matchesCategory
+            );
+        }
+    );
+
+
+    // ==========================================
     // FORMAT DATE
     // ==========================================
 
@@ -723,6 +820,130 @@ function Transactions() {
 
         <div className="transactions-page">
 
+            <style>{`
+                .transaction-filters {
+                    display: grid;
+                    grid-template-columns: minmax(220px, 1.5fr) repeat(3, 1fr) auto;
+                    gap: 12px;
+                    align-items: end;
+                    background: white;
+                    border: 1px solid #e7eaf0;
+                    border-radius: 14px;
+                    padding: 18px;
+                    margin-bottom: 24px;
+                    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03);
+                }
+
+                .transaction-search {
+                    height: 42px;
+                    display: flex;
+                    align-items: center;
+                    border: 1px solid #dfe3ea;
+                    border-radius: 8px;
+                    background: white;
+                    overflow: hidden;
+                }
+
+                .search-icon {
+                    padding-left: 12px;
+                    font-size: 15px;
+                }
+
+                .transaction-search input {
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                    outline: none;
+                    padding: 0 12px 0 8px;
+                    font-size: 14px;
+                    color: #1f2937;
+                }
+
+                .transaction-filter-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 6px;
+                }
+
+                .transaction-filter-group label {
+                    color: #374151;
+                    font-size: 12px;
+                    font-weight: 600;
+                }
+
+                .transaction-filter-group select {
+                    height: 42px;
+                    border: 1px solid #dfe3ea;
+                    border-radius: 8px;
+                    background: white;
+                    color: #1f2937;
+                    padding: 0 10px;
+                    font-size: 14px;
+                    outline: none;
+                }
+
+                .transaction-filter-group select:focus {
+                    border-color: #2563eb;
+                    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+                }
+
+                .clear-filters-button {
+                    height: 42px;
+                    padding: 0 15px;
+                    border: none;
+                    border-radius: 8px;
+                    background: #f1f3f6;
+                    color: #4b5563;
+                    font-size: 13px;
+                    font-weight: 600;
+                    cursor: pointer;
+                }
+
+                .clear-filters-button:hover {
+                    background: #e5e7eb;
+                }
+
+                .transactions-no-results {
+                    background: white;
+                    border: 1px solid #e7eaf0;
+                    border-radius: 14px;
+                    padding: 45px 25px;
+                    margin-bottom: 24px;
+                    text-align: center;
+                    color: #7b8497;
+                }
+
+                .transactions-no-results h3 {
+                    margin: 0 0 8px;
+                    color: #172033;
+                    font-size: 18px;
+                }
+
+                .transactions-no-results p {
+                    margin: 0;
+                    font-size: 14px;
+                }
+
+                @media (max-width: 1100px) {
+                    .transaction-filters {
+                        grid-template-columns: 1fr 1fr;
+                    }
+
+                    .transaction-search {
+                        grid-column: 1 / -1;
+                    }
+                }
+
+                @media (max-width: 600px) {
+                    .transaction-filters {
+                        grid-template-columns: 1fr;
+                    }
+
+                    .transaction-search {
+                        grid-column: auto;
+                    }
+                }
+            `}</style>
 
             {/* ==================================
                 HEADER
@@ -761,6 +982,149 @@ function Transactions() {
                 </button>
 
             </div>
+
+            {/* ==================================
+                SEARCH & FILTERS
+            =================================== */}
+
+            <div className="transaction-filters">
+
+                <div className="transaction-search">
+
+                    <span className="search-icon">
+                        🔍
+                    </span>
+
+                    <input
+                        type="text"
+                        placeholder="Search transactions..."
+                        value={searchTerm}
+                        onChange={(event) =>
+                            setSearchTerm(event.target.value)
+                        }
+                    />
+
+                </div>
+
+
+                <div className="transaction-filter-group">
+
+                    <label>
+                        Type
+                    </label>
+
+                    <select
+                        value={typeFilter}
+                        onChange={(event) =>
+                            setTypeFilter(event.target.value)
+                        }
+                    >
+                        <option value="all">
+                            All Types
+                        </option>
+
+                        <option value="income">
+                            Income
+                        </option>
+
+                        <option value="expense">
+                            Expense
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div className="transaction-filter-group">
+
+                    <label>
+                        Account
+                    </label>
+
+                    <select
+                        value={accountFilter}
+                        onChange={(event) =>
+                            setAccountFilter(event.target.value)
+                        }
+                    >
+
+                        <option value="all">
+                            All Accounts
+                        </option>
+
+                        {accounts.map((account) => (
+                            <option
+                                key={account.id}
+                                value={account.id}
+                            >
+                                {account.name}
+                            </option>
+                        ))}
+
+                    </select>
+
+                </div>
+
+
+                <div className="transaction-filter-group">
+
+                    <label>
+                        Category
+                    </label>
+
+                    <select
+                        value={categoryFilter}
+                        onChange={(event) =>
+                            setCategoryFilter(event.target.value)
+                        }
+                    >
+
+                        <option value="all">
+                            All Categories
+                        </option>
+
+                        {categories.map((category) => (
+                            <option
+                                key={category.id}
+                                value={category.id}
+                            >
+                                {category.name}
+                            </option>
+                        ))}
+
+                    </select>
+
+                </div>
+
+
+                {(searchTerm ||
+                    typeFilter !== "all" ||
+                    accountFilter !== "all" ||
+                    categoryFilter !== "all") && (
+
+                    <button
+                        type="button"
+                        className="clear-filters-button"
+                        onClick={() => {
+
+                            setSearchTerm("");
+
+                            setTypeFilter("all");
+
+                            setAccountFilter("all");
+
+                            setCategoryFilter("all");
+
+                        }}
+                    >
+                        Clear
+                    </button>
+
+                )}
+
+            </div>
+
 
             {/* ==================================
     TRANSACTION SUMMARY
@@ -943,6 +1307,24 @@ function Transactions() {
                 )}
 
 
+            {transactions.length > 0 &&
+                filteredTransactions.length === 0 && (
+
+                <div className="transactions-no-results">
+
+                    <h3>
+                        No transactions found
+                    </h3>
+
+                    <p>
+                        Try changing your search or filters.
+                    </p>
+
+                </div>
+
+            )}
+
+
             {/* ==================================
                 TRANSACTION CARDS
             =================================== */}
@@ -951,7 +1333,7 @@ function Transactions() {
 
                 <div className="transaction-list">
 
-                    {transactions.map(
+                    {filteredTransactions.map(
                         (transaction) => (
 
                             <div
