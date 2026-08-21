@@ -573,3 +573,85 @@
     }
 
 }
+
+/* ==========================================
+   TRANSACTION SUMMARY
+========================================== */
+
+.transaction-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+
+.summary-card {
+    background: white;
+    border: 1px solid #e7eaf0;
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03);
+}
+
+
+.summary-card-content p {
+    margin: 0 0 8px;
+    color: #7b8497;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+
+.summary-card-content h2 {
+    margin: 0;
+    color: #172033;
+    font-size: 23px;
+    font-weight: 700;
+}
+
+
+.summary-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+
+.income-card .summary-icon {
+    background: #ecfdf5;
+    color: #15803d;
+}
+
+
+.expense-card .summary-icon {
+    background: #fff1f2;
+    color: #be123c;
+}
+
+
+.balance-card .summary-icon {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+
+/* ==========================================
+   SUMMARY RESPONSIVE
+========================================== */
+
+@media (max-width: 900px) {
+
+    .transaction-summary {
+        grid-template-columns: 1fr;
+    }
+
+}

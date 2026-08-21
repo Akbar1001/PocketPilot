@@ -762,6 +762,82 @@ function Transactions() {
 
             </div>
 
+            {/* ==================================
+    TRANSACTION SUMMARY
+=================================== */}
+
+<div className="transaction-summary">
+
+    {/* Total Income */}
+
+    <div className="summary-card income-card">
+
+        <div className="summary-card-content">
+
+            <p>
+                Total Income
+            </p>
+
+            <h2>
+                ₹{formatMoney(totalIncome)}
+            </h2>
+
+        </div>
+
+        <div className="summary-icon">
+            ↗
+        </div>
+
+    </div>
+
+
+    {/* Total Expense */}
+
+    <div className="summary-card expense-card">
+
+        <div className="summary-card-content">
+
+            <p>
+                Total Expense
+            </p>
+
+            <h2>
+                ₹{formatMoney(totalExpense)}
+            </h2>
+
+        </div>
+
+        <div className="summary-icon">
+            ↘
+        </div>
+
+    </div>
+
+
+    {/* Net Balance */}
+
+    <div className="summary-card balance-card">
+
+        <div className="summary-card-content">
+
+            <p>
+                Net Balance
+            </p>
+
+            <h2>
+                ₹{formatMoney(netBalance)}
+            </h2>
+
+        </div>
+
+        <div className="summary-icon">
+            ₹
+        </div>
+
+    </div>
+
+</div>
+
 
             {/* ==================================
                 ERROR
