@@ -1,0 +1,417 @@
+.transactions-page {
+    padding: 32px;
+    min-height: 100%;
+}
+
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.transactions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.transactions-header h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+    color: #172033;
+}
+
+.transactions-header p {
+    margin: 8px 0 0;
+    color: #7b8497;
+    font-size: 14px;
+}
+
+
+/* ==========================================
+   ADD BUTTON
+========================================== */
+
+.add-transaction-button {
+    border: none;
+    background: #2563eb;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+
+.add-transaction-button:hover {
+    background: #1d4ed8;
+}
+
+.add-transaction-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.add-transaction-button span {
+    font-size: 20px;
+    line-height: 1;
+}
+
+
+/* ==========================================
+   ERROR
+========================================== */
+
+.transactions-error {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #be123c;
+    padding: 13px 16px;
+    border-radius: 9px;
+    margin-bottom: 20px;
+}
+
+
+/* ==========================================
+   LOADING
+========================================== */
+
+.transactions-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    color: #6b7280;
+    font-size: 15px;
+}
+
+
+/* ==========================================
+   EMPTY STATE
+========================================== */
+
+.transactions-empty {
+    background: white;
+    border: 1px solid #e7eaf0;
+    border-radius: 14px;
+    padding: 70px 30px;
+    text-align: center;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03);
+}
+
+.empty-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: #eff6ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.transactions-empty h2 {
+    margin: 0;
+    color: #172033;
+    font-size: 21px;
+}
+
+.transactions-empty p {
+    margin: 10px auto 24px;
+    max-width: 450px;
+    color: #7b8497;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.empty-add-button {
+    border: none;
+    background: #2563eb;
+    color: white;
+    padding: 11px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+
+/* ==========================================
+   MODAL OVERLAY
+========================================== */
+
+.transaction-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.48);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+}
+
+
+/* ==========================================
+   MODAL
+========================================== */
+
+.transaction-modal {
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+}
+
+
+/* ==========================================
+   MODAL HEADER
+========================================== */
+
+.transaction-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 24px 26px 18px;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.transaction-modal-header h2 {
+    margin: 0;
+    color: #172033;
+    font-size: 21px;
+}
+
+.transaction-modal-header p {
+    margin: 6px 0 0;
+    color: #7b8497;
+    font-size: 13px;
+}
+
+.transaction-close-button {
+    width: 34px;
+    height: 34px;
+    border: none;
+    background: #f5f6f8;
+    border-radius: 8px;
+    font-size: 22px;
+    color: #697386;
+    cursor: pointer;
+}
+
+.transaction-close-button:hover {
+    background: #eceef2;
+}
+
+
+/* ==========================================
+   FORM
+========================================== */
+
+.transaction-form {
+    padding: 24px 26px 26px;
+}
+
+.transaction-form-group {
+    margin-bottom: 18px;
+}
+
+.transaction-form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.transaction-form-group input,
+.transaction-form-group select,
+.transaction-form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #dfe3ea;
+    border-radius: 8px;
+    padding: 11px 12px;
+    background: white;
+    color: #1f2937;
+    font-size: 14px;
+    outline: none;
+    font-family: inherit;
+}
+
+.transaction-form-group input:focus,
+.transaction-form-group select:focus,
+.transaction-form-group textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.transaction-form-group textarea {
+    resize: vertical;
+}
+
+
+/* ==========================================
+   TYPE SELECTOR
+========================================== */
+
+.transaction-type-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.type-button {
+    padding: 11px;
+    border: 1px solid #dfe3ea;
+    background: white;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #667085;
+}
+
+.type-button.active.expense {
+    background: #fff1f2;
+    border-color: #fda4af;
+    color: #be123c;
+}
+
+.type-button.active.income {
+    background: #ecfdf5;
+    border-color: #86efac;
+    color: #15803d;
+}
+
+
+/* ==========================================
+   AMOUNT
+========================================== */
+
+.transaction-amount-input {
+    display: flex;
+    align-items: center;
+    border: 1px solid #dfe3ea;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.transaction-amount-input:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.transaction-amount-input span {
+    padding-left: 13px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.transaction-amount-input input {
+    border: none;
+    box-shadow: none;
+}
+
+.transaction-amount-input input:focus {
+    box-shadow: none;
+}
+
+
+/* ==========================================
+   FORM ERROR
+========================================== */
+
+.transaction-form-error {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #be123c;
+    padding: 11px 13px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+
+
+/* ==========================================
+   MODAL ACTIONS
+========================================== */
+
+.transaction-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.transaction-cancel-button,
+.transaction-save-button {
+    border: none;
+    padding: 11px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.transaction-cancel-button {
+    background: #f1f3f6;
+    color: #4b5563;
+}
+
+.transaction-save-button {
+    background: #2563eb;
+    color: white;
+}
+
+.transaction-save-button:hover {
+    background: #1d4ed8;
+}
+
+.transaction-cancel-button:disabled,
+.transaction-save-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 700px) {
+
+    .transactions-page {
+        padding: 20px;
+    }
+
+    .transactions-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .add-transaction-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .transaction-modal {
+        max-height: 94vh;
+    }
+
+    .transaction-modal-header,
+    .transaction-form {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}

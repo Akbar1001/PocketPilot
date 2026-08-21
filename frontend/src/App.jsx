@@ -11,6 +11,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import Dashboard from "./pages/Dashboard";
 import Accounts from "./pages/Accounts";
+import Transactions from "./pages/Transactions";
+
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -51,6 +53,11 @@ function App() {
                         <Route
                             path="/accounts"
                             element={<Accounts />}
+                        />
+
+                        <Route
+                            path="/transactions"
+                            element={<Transactions />}
                         />
 
                     </Route>

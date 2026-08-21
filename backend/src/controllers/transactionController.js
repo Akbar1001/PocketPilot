@@ -382,8 +382,8 @@ const updateTransaction = async (req, res) => {
             );
         }
 
-        // Update transaction
-        const updatedTransactionResult = await client.query(
+    // Update transaction
+    const updatedTransactionResult = await client.query(
             `UPDATE transactions
              SET account_id = $1,
                  category_id = $2,
