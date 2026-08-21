@@ -6,13 +6,12 @@ import {
 } from "react-router-dom";
 
 import Layout from "./components/Layout";
-
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import Dashboard from "./pages/Dashboard";
 import Accounts from "./pages/Accounts";
 import Transactions from "./pages/Transactions";
-
+import Categories from "./pages/Categories";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -26,7 +25,9 @@ function App() {
 
             <Routes>
 
-                {/* Public routes */}
+                {/* ==========================================
+                    PUBLIC ROUTES
+                ========================================== */}
 
                 <Route
                     path="/login"
@@ -39,25 +40,43 @@ function App() {
                 />
 
 
-                {/* Protected routes */}
+                {/* ==========================================
+                    PROTECTED ROUTES
+                ========================================== */}
 
                 <Route element={<ProtectedRoute />}>
 
                     <Route element={<Layout />}>
+
+                        {/* Dashboard */}
 
                         <Route
                             path="/dashboard"
                             element={<Dashboard />}
                         />
 
+
+                        {/* Accounts */}
+
                         <Route
                             path="/accounts"
                             element={<Accounts />}
                         />
 
+
+                        {/* Transactions */}
+
                         <Route
                             path="/transactions"
                             element={<Transactions />}
+                        />
+
+
+                        {/* Categories */}
+
+                        <Route
+                            path="/categories"
+                            element={<Categories />}
                         />
 
                     </Route>
@@ -65,7 +84,9 @@ function App() {
                 </Route>
 
 
-                {/* Default route */}
+                {/* ==========================================
+                    DEFAULT ROUTE
+                ========================================== */}
 
                 <Route
                     path="/"

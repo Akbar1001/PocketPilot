@@ -1,0 +1,521 @@
+/* ==========================================
+   CATEGORIES PAGE
+========================================== */
+
+.categories-page {
+    padding: 32px;
+    min-height: 100%;
+}
+
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.categories-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.categories-header h1 {
+    margin: 0;
+    color: #172033;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.categories-header p {
+    margin: 8px 0 0;
+    color: #7b8497;
+    font-size: 14px;
+}
+
+
+/* ==========================================
+   ADD BUTTON
+========================================== */
+
+.add-category-button {
+    border: none;
+    background: #2563eb;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+
+.add-category-button:hover {
+    background: #1d4ed8;
+}
+
+.add-category-button span {
+    font-size: 20px;
+    line-height: 1;
+}
+
+
+/* ==========================================
+   ERROR
+========================================== */
+
+.categories-error {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #be123c;
+    padding: 13px 16px;
+    border-radius: 9px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.categories-error button {
+    border: none;
+    background: #be123c;
+    color: white;
+    padding: 7px 13px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+
+/* ==========================================
+   LOADING
+========================================== */
+
+.categories-loading {
+    min-height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+}
+
+
+/* ==========================================
+   GRID
+========================================== */
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.category-section {
+    background: white;
+    border: 1px solid #e7eaf0;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03);
+}
+
+
+/* ==========================================
+   SECTION HEADER
+========================================== */
+
+.category-section-header {
+    padding: 22px 24px;
+    border-bottom: 1px solid #edf0f4;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.category-section-header h2 {
+    margin: 0;
+    color: #172033;
+    font-size: 18px;
+}
+
+.category-section-header p {
+    margin: 6px 0 0;
+    color: #7b8497;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.section-add-button {
+    border: 1px solid #dbe3f0;
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 8px 12px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.section-add-button:hover {
+    background: #dbeafe;
+}
+
+
+/* ==========================================
+   CATEGORY LIST
+========================================== */
+
+.category-list {
+    padding: 8px 24px 16px;
+}
+
+.category-row {
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.category-row:last-child {
+    border-bottom: none;
+}
+
+.category-row-left {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+}
+
+.category-icon {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.income-icon {
+    background: #ecfdf5;
+    color: #15803d;
+}
+
+.expense-icon {
+    background: #fff1f2;
+    color: #be123c;
+}
+
+.category-name {
+    color: #263248;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.category-source {
+    margin-top: 4px;
+    color: #98a1b2;
+    font-size: 12px;
+}
+
+.category-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.category-edit-button,
+.category-delete-button {
+    border: none;
+    background: transparent;
+    padding: 7px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.category-edit-button {
+    color: #2563eb;
+}
+
+.category-edit-button:hover {
+    background: #eff6ff;
+}
+
+.category-delete-button {
+    color: #dc2626;
+}
+
+.category-delete-button:hover {
+    background: #fef2f2;
+}
+
+
+/* ==========================================
+   EMPTY LIST
+========================================== */
+
+.categories-empty-list {
+    padding: 45px 25px;
+    text-align: center;
+}
+
+.categories-empty-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    background: #eff6ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 23px;
+    font-weight: 700;
+}
+
+.categories-empty-list p {
+    margin: 0 0 15px;
+    color: #7b8497;
+    font-size: 14px;
+}
+
+.category-inline-add {
+    border: none;
+    background: transparent;
+    color: #2563eb;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.category-inline-add:hover {
+    text-decoration: underline;
+}
+
+
+/* ==========================================
+   MODAL OVERLAY
+========================================== */
+
+.category-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(15, 23, 42, 0.48);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+
+/* ==========================================
+   MODAL
+========================================== */
+
+.category-modal {
+    width: 100%;
+    max-width: 500px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+}
+
+.category-modal-header {
+    padding: 24px 26px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.category-modal-header h2 {
+    margin: 0;
+    color: #172033;
+    font-size: 21px;
+}
+
+.category-modal-header p {
+    margin: 6px 0 0;
+    color: #7b8497;
+    font-size: 13px;
+}
+
+.category-close-button {
+    width: 34px;
+    height: 34px;
+    border: none;
+    background: #f5f6f8;
+    border-radius: 8px;
+    color: #697386;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.category-close-button:hover {
+    background: #eceef2;
+}
+
+
+/* ==========================================
+   FORM
+========================================== */
+
+.category-form {
+    padding: 24px 26px 26px;
+}
+
+.category-form-group {
+    margin-bottom: 18px;
+}
+
+.category-form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.category-form-group input,
+.category-form-group select {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #dfe3ea;
+    border-radius: 8px;
+    padding: 11px 12px;
+    background: white;
+    color: #1f2937;
+    font-size: 14px;
+    outline: none;
+    font-family: inherit;
+}
+
+.category-form-group input:focus,
+.category-form-group select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+
+/* ==========================================
+   FORM ERROR
+========================================== */
+
+.category-form-error {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #be123c;
+    padding: 11px 13px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+
+
+/* ==========================================
+   MODAL ACTIONS
+========================================== */
+
+.category-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.category-cancel-button,
+.category-save-button {
+    border: none;
+    padding: 11px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.category-cancel-button {
+    background: #f1f3f6;
+    color: #4b5563;
+}
+
+.category-save-button {
+    background: #2563eb;
+    color: white;
+}
+
+.category-save-button:hover {
+    background: #1d4ed8;
+}
+
+.category-cancel-button:disabled,
+.category-save-button:disabled,
+.category-close-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 900px) {
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 650px) {
+    .categories-page {
+        padding: 20px;
+    }
+
+    .categories-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .add-category-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .category-section-header {
+        align-items: flex-start;
+    }
+
+    .category-row {
+        align-items: flex-start;
+        padding: 14px 0;
+    }
+
+    .category-actions {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .category-modal {
+        max-height: 92vh;
+        overflow-y: auto;
+    }
+
+    .category-modal-header,
+    .category-form {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
