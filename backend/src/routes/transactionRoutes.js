@@ -5,6 +5,7 @@ const authenticate = require("../middleware/authMiddleware");
 const {
     createTransaction,
     getTransactionById,
+     getTransactions,
     updateTransaction,
     deleteTransaction
 } = require("../controllers/transactionController");
@@ -13,6 +14,7 @@ const router = express.Router();
 
 router.post("/", authenticate, createTransaction);
 
+router.get("/",authenticate,getTransactions);
 
 router.get("/:id", authenticate, getTransactionById);
 

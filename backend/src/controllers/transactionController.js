@@ -193,6 +193,62 @@ const createTransaction = async (req, res) => {
 };
 
 
+// Get All Transactions
+const getTransactions = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const result = await pool.query(
+            `SELECT
+                t.id,
+                t.account_id,
+                t.category_id,
+                t.type,
+                t.amount,
+                t.description,
+                t.transaction_date,
+                t.created_at,
+
+                a.name AS account_name,
+
+                c.name AS category_name
+
+             FROM transactions t
+
+             INNER JOIN accounts a
+                ON t.account_id = a.id
+
+             INNER JOIN categories c
+                ON t.category_id = c.id
+
+             WHERE t.user_id = $1
+
+             ORDER BY
+                t.transaction_date DESC,
+                t.created_at DESC`,
+            [userId]
+        );
+
+        return res.status(200).json({
+            success: true,
+            transactions: result.rows
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Get transactions error:",
+            error
+        );
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+};
+
+
 // Get Transaction by Id
 const getTransactionById = async (req, res) => {
     try {
@@ -547,6 +603,7 @@ const deleteTransaction = async (req, res) => {
 
 module.exports = {
     createTransaction,
+     getTransactions,
     getTransactionById,
     updateTransaction,
     deleteTransaction
