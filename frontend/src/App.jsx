@@ -18,7 +18,7 @@ import Signup from "./pages/Signup";
 import Budgets from "./pages/Budgets";
 import Reports from "./pages/Reports";
 import Goals from "./pages/Goals";
-
+import Settings from "./pages/Settings";
 
 
 function App() {
@@ -102,6 +102,13 @@ function App() {
                         <Route
                             path="/goals"
                             element={<Goals />}
+                        />
+
+                        {/* Settings */}
+
+                        <Route
+                            path="/settings"
+                            element={<Settings />}
                         />
 
                     </Route>
