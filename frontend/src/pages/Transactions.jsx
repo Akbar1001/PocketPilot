@@ -238,7 +238,7 @@ function Transactions() {
                     await api.post(
                         "/transactions",
                         {
-                            accountId:
+                            account_id:
                                 formData.accountId,
 
                             type:
@@ -256,7 +256,6 @@ function Transactions() {
                                 formData.date
                         }
                     );
-
 
                 console.log(
                     "Transaction created:",
@@ -278,7 +277,7 @@ function Transactions() {
                         {
                             accountId:
                                 formData.accountId,
-
+                        
                             type:
                                 formData.type,
 
@@ -293,7 +292,7 @@ function Transactions() {
                             date:
                                 formData.date
                         }
-                    );
+                    );              
 
 
                 console.log(
