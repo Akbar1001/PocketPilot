@@ -101,9 +101,9 @@ const createGoal = async (req, res) => {
     } catch (error) {
 
         console.error(
-            "Create goal error:",
+            "Create goal error:", 
             error
-        );
+        ); 
 
         return res.status(500).json({
             success: false,
