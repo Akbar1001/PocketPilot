@@ -15,7 +15,7 @@ import Categories from "./pages/Categories";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-
+import Budgets from "./pages/Budgets";
 
 function App() {
 
@@ -78,6 +78,13 @@ function App() {
                             path="/categories"
                             element={<Categories />}
                         />
+
+                        {/* Budgets */}
+    
+                        <Route
+                            path="/budgets"
+                            element={<Budgets />}
+                        />  
 
                     </Route>
 

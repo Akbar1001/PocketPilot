@@ -14,6 +14,9 @@ const transactionRoutes = require("./routes/transactionRoutes");
 
 const dashboardRoutes = require("./routes/dashboardRoutes");
 
+const budgetRoutes = require("./routes/budgetRoutes");
+
+
 app.use(cors());  //Allows frontend to communicate with backend
 app.use(helmet()); //Helmet adds security-related HTTP headers.
 app.use(express.json());  //express.json() cuz -> Express needs to parse that JSON request body
@@ -35,5 +38,8 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/transactions", transactionRoutes);
 
 app.use("/api/dashboard", dashboardRoutes);
+
+app.use("/api/budgets", budgetRoutes);
+
 
 module.exports = app;
