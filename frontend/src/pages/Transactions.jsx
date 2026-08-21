@@ -808,7 +808,7 @@ function Transactions() {
         </div>
 
         <div className="summary-icon">
-            ↘
+            
         </div>
 
     </div>
