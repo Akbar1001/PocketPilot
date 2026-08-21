@@ -16,6 +16,8 @@ import Categories from "./pages/Categories";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Budgets from "./pages/Budgets";
+import Reports from "./pages/Reports";
+
 
 function App() {
 
@@ -84,7 +86,14 @@ function App() {
                         <Route
                             path="/budgets"
                             element={<Budgets />}
-                        />  
+                        /> 
+
+                        {/* Reports */}
+
+                        <Route
+                            path="/reports"
+                            element={<Reports />}
+                        />
 
                     </Route>
 

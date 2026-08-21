@@ -16,6 +16,7 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const budgetRoutes = require("./routes/budgetRoutes");
 
+const reportRoutes = require("./routes/reportRoutes");
 
 app.use(cors());  //Allows frontend to communicate with backend
 app.use(helmet()); //Helmet adds security-related HTTP headers.
@@ -40,6 +41,8 @@ app.use("/api/transactions", transactionRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 app.use("/api/budgets", budgetRoutes);
+
+app.use("/api/reports", reportRoutes);
 
 
 module.exports = app;

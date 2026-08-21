@@ -45,9 +45,9 @@ const Layout = () => {
                         Budgets
                     </NavLink>
 
-                    <NavLink to="/analytics">
+                    <NavLink to="/Reports">
                         <span>▥</span>
-                        Analytics
+                        Reports
                     </NavLink>
 
                     <NavLink to="/goals">
