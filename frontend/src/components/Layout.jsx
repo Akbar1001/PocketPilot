@@ -1,14 +1,32 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import "./Layout.css";
 
 const Layout = () => {
+
+    const { user } = useAuth();
+
+    // Get user's name
+    const userName = user?.name || user?.username || "User";
+
+    // Get first letter for avatar
+    const userInitial = userName
+        .charAt(0)
+        .toUpperCase();
+
     return (
         <div className="app-layout">
 
-            {/* Sidebar */}
+            {/* =========================
+                SIDEBAR
+            ========================== */}
+
             <aside className="sidebar">
 
+                {/* LOGO */}
+
                 <div className="logo">
+
                     <div className="logo-icon">
                         P
                     </div>
@@ -16,7 +34,13 @@ const Layout = () => {
                     <span>
                         Pocket<span>Pilot</span>
                     </span>
+
                 </div>
+
+
+                {/* =========================
+                    NAVIGATION
+                ========================== */}
 
                 <nav className="sidebar-nav">
 
@@ -62,31 +86,52 @@ const Layout = () => {
 
                 </nav>
 
+
+                {/* =========================
+                    SIDEBAR USER
+                ========================== */}
+
                 <div className="sidebar-bottom">
 
                     <div className="sidebar-user">
+
                         <div className="user-avatar">
-                            A
+                            {userInitial}
                         </div>
 
                         <div>
-                            <strong>Akbar</strong>
-                            <small>Personal Account</small>
+
+                            <strong>
+                                {userName}
+                            </strong>
+
+                            <small>
+                                Personal Account
+                            </small>
+
                         </div>
+
                     </div>
 
                 </div>
 
             </aside>
 
-            {/* Main Content */}
+
+            {/* =========================
+                MAIN CONTENT
+            ========================== */}
+
             <main className="main-content">
+
+                {/* TOP BAR */}
 
                 <header className="topbar">
 
                     <div className="mobile-logo">
                         Pocket<span>Pilot</span>
                     </div>
+
 
                     <div className="topbar-actions">
 
@@ -95,15 +140,20 @@ const Layout = () => {
                         </button>
 
                         <button className="profile-button">
-                            A
+                            {userInitial}
                         </button>
 
                     </div>
 
                 </header>
 
+
+                {/* PAGE CONTENT */}
+
                 <div className="page-content">
+
                     <Outlet />
+
                 </div>
 
             </main>

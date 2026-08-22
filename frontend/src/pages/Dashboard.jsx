@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
+import { useAuth } from "../context/AuthContext";
 import "./Dashboard.css";
 
 import {
@@ -18,6 +19,13 @@ import {
 
 
 const Dashboard = () => {
+
+    const { user } = useAuth();
+
+    const userName =
+        user?.name ||
+        user?.username ||
+        "User";
 
     // -----------------------------
     // STATE
@@ -207,7 +215,7 @@ const Dashboard = () => {
                 <div>
 
                     <h1>
-                        Good Morning, Akbar 👋
+                        Hello, {userName} 👋
                     </h1>
 
                     <p>
