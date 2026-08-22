@@ -6,20 +6,41 @@ import { useAuth } from "../context/AuthContext";
 
 import "./Settings.css";
 
+
 function Settings() {
+
     const navigate = useNavigate();
+
     const { logout } = useAuth();
+
+
+    // ==========================================
+    // USER
+    // ==========================================
 
     const [user, setUser] = useState({
         name: "",
         email: ""
     });
 
-    const [profileLoading, setProfileLoading] = useState(true);
-    const [profileSaving, setProfileSaving] = useState(false);
 
-    const [profileMessage, setProfileMessage] = useState("");
-    const [profileError, setProfileError] = useState("");
+    const [profileLoading, setProfileLoading] =
+        useState(true);
+
+    const [profileSaving, setProfileSaving] =
+        useState(false);
+
+
+    const [profileMessage, setProfileMessage] =
+        useState("");
+
+    const [profileError, setProfileError] =
+        useState("");
+
+
+    // ==========================================
+    // PASSWORD
+    // ==========================================
 
     const [passwordData, setPasswordData] = useState({
         currentPassword: "",
@@ -27,13 +48,25 @@ function Settings() {
         confirmPassword: ""
     });
 
-    const [passwordSaving, setPasswordSaving] = useState(false);
-    const [passwordMessage, setPasswordMessage] = useState("");
-    const [passwordError, setPasswordError] = useState("");
+
+    const [passwordSaving, setPasswordSaving] =
+        useState(false);
+
+    const [passwordMessage, setPasswordMessage] =
+        useState("");
+
+    const [passwordError, setPasswordError] =
+        useState("");
+
+
+    // ==========================================
+    // CURRENCY
+    // ==========================================
 
     const [currency, setCurrency] = useState(
         localStorage.getItem("currency") || "INR"
     );
+
 
 
     // ==========================================
@@ -41,37 +74,107 @@ function Settings() {
     // ==========================================
 
     useEffect(() => {
+
         const loadUser = async () => {
+
             try {
-                const response = await api.get("/auth/me");
+
+                const response =
+                    await api.get("/users/me");
+
+
+                const loadedUser =
+                    response.data.user;
+
+
+                setUser(loadedUser);
+
+
+                // Keep localStorage synchronized
+                localStorage.setItem(
+                    "user",
+                    JSON.stringify(loadedUser)
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Load settings user error:",
+                    error
+                );
+
 
                 /*
-                 * Your current /auth/me endpoint only
-                 * returns the authenticated userId.
-                 *
-                 * So we first try localStorage because
-                 * Login.jsx already stores the user there.
+                 * If the access token has expired,
+                 * don't keep showing stale profile data.
+                 */
+
+                if (
+                    error.response?.status === 401
+                ) {
+
+                    localStorage.removeItem(
+                        "accessToken"
+                    );
+
+                    localStorage.removeItem(
+                        "refreshToken"
+                    );
+
+                    localStorage.removeItem(
+                        "user"
+                    );
+
+                    logout();
+
+                    navigate("/login");
+
+                    return;
+                }
+
+
+                /*
+                 * Fallback to localStorage
+                 * if the API temporarily fails.
                  */
 
                 const storedUser =
                     localStorage.getItem("user");
 
+
                 if (storedUser) {
-                    setUser(JSON.parse(storedUser));
+
+                    try {
+
+                        setUser(
+                            JSON.parse(storedUser)
+                        );
+
+                    } catch (parseError) {
+
+                        console.error(
+                            "Stored user parse error:",
+                            parseError
+                        );
+
+                    }
+
                 }
 
-            } catch (error) {
-                console.error(
-                    "Load settings user error:",
-                    error
-                );
             } finally {
+
                 setProfileLoading(false);
+
             }
+
         };
 
+
         loadUser();
-    }, []);
+
+    }, [logout, navigate]);
+
 
 
     // ==========================================
@@ -79,16 +182,24 @@ function Settings() {
     // ==========================================
 
     const handleProfileChange = (event) => {
-        const { name, value } = event.target;
+
+        const {
+            name,
+            value
+        } = event.target;
+
 
         setUser((previous) => ({
             ...previous,
             [name]: value
         }));
 
+
         setProfileMessage("");
         setProfileError("");
+
     };
+
 
 
     // ==========================================
@@ -96,16 +207,24 @@ function Settings() {
     // ==========================================
 
     const handlePasswordChange = (event) => {
-        const { name, value } = event.target;
+
+        const {
+            name,
+            value
+        } = event.target;
+
 
         setPasswordData((previous) => ({
             ...previous,
             [name]: value
         }));
 
+
         setPasswordMessage("");
         setPasswordError("");
+
     };
+
 
 
     // ==========================================
@@ -113,54 +232,78 @@ function Settings() {
     // ==========================================
 
     const handleProfileSubmit = async (event) => {
+
         event.preventDefault();
+
 
         setProfileMessage("");
         setProfileError("");
 
+
         if (!user.name.trim()) {
-            setProfileError("Name cannot be empty.");
+
+            setProfileError(
+                "Name cannot be empty."
+            );
+
             return;
         }
 
+
         setProfileSaving(true);
 
+
         try {
-            const response = await api.put(
-                "/users/profile",
-                {
-                    name: user.name
-                }
-            );
+
+            const response =
+                await api.put(
+                    "/users/profile",
+                    {
+                        name: user.name.trim()
+                    }
+                );
+
 
             const updatedUser =
                 response.data.user;
 
+
             setUser(updatedUser);
+
 
             localStorage.setItem(
                 "user",
                 JSON.stringify(updatedUser)
             );
 
+
             setProfileMessage(
                 "Profile updated successfully."
             );
 
+
         } catch (error) {
+
             console.error(
                 "Update profile error:",
                 error
             );
 
+
             setProfileError(
                 error.response?.data?.message ||
                 "Unable to update profile."
             );
+
+
         } finally {
+
             setProfileSaving(false);
+
         }
+
     };
+
 
 
     // ==========================================
@@ -168,42 +311,74 @@ function Settings() {
     // ==========================================
 
     const handlePasswordSubmit = async (event) => {
+
         event.preventDefault();
+
 
         setPasswordMessage("");
         setPasswordError("");
+
+
+        // --------------------------------------
+        // Required fields
+        // --------------------------------------
 
         if (
             !passwordData.currentPassword ||
             !passwordData.newPassword ||
             !passwordData.confirmPassword
         ) {
+
             setPasswordError(
                 "Please fill in all password fields."
             );
+
             return;
         }
+
+
+        // --------------------------------------
+        // Confirm password
+        // --------------------------------------
 
         if (
             passwordData.newPassword !==
             passwordData.confirmPassword
         ) {
+
             setPasswordError(
                 "New passwords do not match."
             );
+
             return;
         }
 
-        if (passwordData.newPassword.length < 6) {
+
+        // --------------------------------------
+        // Minimum length
+        // --------------------------------------
+
+        if (
+            passwordData.newPassword.length < 6
+        ) {
+
             setPasswordError(
                 "New password must contain at least 6 characters."
             );
+
             return;
         }
 
+
+        // --------------------------------------
+        // Save
+        // --------------------------------------
+
         setPasswordSaving(true);
 
+
         try {
+
             await api.put(
                 "/users/password",
                 {
@@ -215,9 +390,11 @@ function Settings() {
                 }
             );
 
+
             setPasswordMessage(
                 "Password changed successfully."
             );
+
 
             setPasswordData({
                 currentPassword: "",
@@ -225,20 +402,29 @@ function Settings() {
                 confirmPassword: ""
             });
 
+
         } catch (error) {
+
             console.error(
                 "Change password error:",
                 error
             );
 
+
             setPasswordError(
                 error.response?.data?.message ||
                 "Unable to change password."
             );
+
+
         } finally {
+
             setPasswordSaving(false);
+
         }
+
     };
+
 
 
     // ==========================================
@@ -246,15 +432,21 @@ function Settings() {
     // ==========================================
 
     const handleCurrencyChange = (event) => {
-        const value = event.target.value;
+
+        const value =
+            event.target.value;
+
 
         setCurrency(value);
+
 
         localStorage.setItem(
             "currency",
             value
         );
+
     };
+
 
 
     // ==========================================
@@ -262,9 +454,13 @@ function Settings() {
     // ==========================================
 
     const handleLogout = () => {
+
         logout();
+
         navigate("/login");
+
     };
+
 
 
     // ==========================================
@@ -272,20 +468,33 @@ function Settings() {
     // ==========================================
 
     if (profileLoading) {
+
         return (
+
             <div className="settings-page">
 
                 <div className="settings-loading">
+
                     Loading settings...
+
                 </div>
 
             </div>
+
         );
+
     }
 
 
+
+    // ==========================================
+    // PAGE
+    // ==========================================
+
     return (
+
         <div className="settings-page">
+
 
             {/* ==================================
                 HEADER
@@ -294,15 +503,20 @@ function Settings() {
             <div className="settings-header">
 
                 <div>
-                    <h1>Settings</h1>
+
+                    <h1>
+                        Settings
+                    </h1>
 
                     <p>
                         Manage your PocketPilot account
                         and preferences.
                     </p>
+
                 </div>
 
             </div>
+
 
 
             {/* ==================================
@@ -318,14 +532,19 @@ function Settings() {
                     </div>
 
                     <div>
-                        <h2>Profile</h2>
+
+                        <h2>
+                            Profile
+                        </h2>
 
                         <p>
                             Update your personal information.
                         </p>
+
                     </div>
 
                 </div>
+
 
 
                 <form
@@ -344,11 +563,14 @@ function Settings() {
                             type="text"
                             name="name"
                             value={user.name || ""}
-                            onChange={handleProfileChange}
+                            onChange={
+                                handleProfileChange
+                            }
                             placeholder="Enter your name"
                         />
 
                     </div>
+
 
 
                     <div className="settings-form-group">
@@ -371,18 +593,29 @@ function Settings() {
                     </div>
 
 
+
                     {profileError && (
+
                         <div className="settings-error">
+
                             {profileError}
+
                         </div>
+
                     )}
+
 
 
                     {profileMessage && (
+
                         <div className="settings-success">
+
                             {profileMessage}
+
                         </div>
+
                     )}
+
 
 
                     <div className="settings-actions">
@@ -392,9 +625,12 @@ function Settings() {
                             className="settings-primary-button"
                             disabled={profileSaving}
                         >
+
                             {profileSaving
                                 ? "Saving..."
-                                : "Save Changes"}
+                                : "Save Changes"
+                            }
+
                         </button>
 
                     </div>
@@ -402,6 +638,7 @@ function Settings() {
                 </form>
 
             </section>
+
 
 
             {/* ==================================
@@ -417,14 +654,19 @@ function Settings() {
                     </div>
 
                     <div>
-                        <h2>Security</h2>
+
+                        <h2>
+                            Security
+                        </h2>
 
                         <p>
                             Keep your account secure.
                         </p>
+
                     </div>
 
                 </div>
+
 
 
                 <form
@@ -454,6 +696,7 @@ function Settings() {
                     </div>
 
 
+
                     <div className="settings-form-group">
 
                         <label htmlFor="newPassword">
@@ -474,6 +717,7 @@ function Settings() {
                         />
 
                     </div>
+
 
 
                     <div className="settings-form-group">
@@ -498,18 +742,29 @@ function Settings() {
                     </div>
 
 
+
                     {passwordError && (
+
                         <div className="settings-error">
+
                             {passwordError}
+
                         </div>
+
                     )}
+
 
 
                     {passwordMessage && (
+
                         <div className="settings-success">
+
                             {passwordMessage}
+
                         </div>
+
                     )}
+
 
 
                     <div className="settings-actions">
@@ -519,9 +774,12 @@ function Settings() {
                             className="settings-primary-button"
                             disabled={passwordSaving}
                         >
+
                             {passwordSaving
                                 ? "Changing..."
-                                : "Change Password"}
+                                : "Change Password"
+                            }
+
                         </button>
 
                     </div>
@@ -529,6 +787,7 @@ function Settings() {
                 </form>
 
             </section>
+
 
 
             {/* ==================================
@@ -544,15 +803,20 @@ function Settings() {
                     </div>
 
                     <div>
-                        <h2>Preferences</h2>
+
+                        <h2>
+                            Preferences
+                        </h2>
 
                         <p>
                             Customize how PocketPilot
                             displays your finances.
                         </p>
+
                     </div>
 
                 </div>
+
 
 
                 <div className="settings-form">
@@ -566,7 +830,9 @@ function Settings() {
                         <select
                             id="currency"
                             value={currency}
-                            onChange={handleCurrencyChange}
+                            onChange={
+                                handleCurrencyChange
+                            }
                         >
 
                             <option value="INR">
@@ -587,6 +853,7 @@ function Settings() {
 
                         </select>
 
+
                         <span className="settings-help">
                             This preference is saved locally
                             for now.
@@ -597,6 +864,7 @@ function Settings() {
                 </div>
 
             </section>
+
 
 
             {/* ==================================
@@ -612,19 +880,25 @@ function Settings() {
                     </div>
 
                     <div>
-                        <h2>Account</h2>
+
+                        <h2>
+                            Account
+                        </h2>
 
                         <p>
                             Manage your current session.
                         </p>
+
                     </div>
 
                 </div>
 
 
+
                 <div className="settings-logout-row">
 
                     <div>
+
                         <strong>
                             Sign out of PocketPilot
                         </strong>
@@ -633,7 +907,9 @@ function Settings() {
                             You will be redirected to
                             the login page.
                         </p>
+
                     </div>
+
 
 
                     <button
@@ -648,8 +924,12 @@ function Settings() {
 
             </section>
 
+
         </div>
+
     );
+
 }
+
 
 export default Settings;

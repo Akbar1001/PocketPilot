@@ -2,26 +2,51 @@ const express = require("express");
 
 const authenticate = require("../middleware/authMiddleware");
 
+const {
+    getCurrentUser,
+    updateProfile,
+    changePassword
+} = require("../controllers/userController");
+
+
 const router = express.Router();
 
 
-// GET current user
-router.get("/me", authenticate, async (req, res) => {
-    try {
-        return res.status(200).json({
-            success: true,
-            user: req.user
-        });
 
-    } catch (error) {
-        console.error("Get user error:", error);
+// ==========================================
+// GET CURRENT USER
+// ==========================================
 
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error"
-        });
-    }
-});
+router.get(
+    "/me",
+    authenticate,
+    getCurrentUser
+);
+
+
+
+// ==========================================
+// UPDATE PROFILE
+// ==========================================
+
+router.put(
+    "/profile",
+    authenticate,
+    updateProfile
+);
+
+
+
+// ==========================================
+// CHANGE PASSWORD
+// ==========================================
+
+router.put(
+    "/password",
+    authenticate,
+    changePassword
+);
+
 
 
 module.exports = router;
